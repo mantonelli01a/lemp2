@@ -8,21 +8,31 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./src:/var/www/php:ro
+      - ./src/backend:/var/www/backend:ro,delegated
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d:ro
-      - phpmyadmindata:/var/www/phpmyadmin:ro
+      - phpmyadmindata:/var/www/phpmyadmin:ro,delegated
     depends_on:
-      - php
+      - backend
       - phpmyadmin
+      - frontend
 
-  # PHP Service
-  php:
-    build: ./.docker/php
-    working_dir: /var/www/php
+  # Backend Service
+  backend:
+    build: ./src/backend
+    working_dir: /var/www/backend
     volumes:
-      - ./src:/var/www/php
+      - ./src/backend:/var/www/backend:delegated
     depends_on:
       - mysql
+
+  # Frontend Service
+  frontend:
+    build: ./src/frontend
+    working_dir: /var/www/frontend
+    volumes:
+      - ./src/frontend:/var/www/frontend:delegated
+    depends_on:
+      - backend
 
   # MySQL Service
   mysql:
@@ -32,7 +42,7 @@ services:
       MYSQL_DATABASE: demo
     volumes:
       - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
-      - mysqldata:/var/lib/mysql
+      - mysqldata:/var/lib/mysql:delegated
 
   # PhpMyAdmin Service
   phpmyadmin:
@@ -40,7 +50,7 @@ services:
     environment:
       PMA_HOST: mysql
     volumes:
-      - phpmyadmindata:/var/www/html
+      - phpmyadmindata:/var/www/html:delegated
     depends_on:
       - mysql
 
