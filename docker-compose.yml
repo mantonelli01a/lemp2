@@ -22,6 +22,7 @@ services:
     working_dir: /var/www/backend
     volumes:
       - ./src/backend:/var/www/backend:delegated
+      - ./.docker/backend/init:/opt/files/init:delegated,ro
     depends_on:
       - mysql
 
