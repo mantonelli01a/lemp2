@@ -4,17 +4,23 @@ version: '3.7'
 services:
   # Nginx Service
   nginx:
-    image: nginx:1.17-alpine
+    build: ./.docker/nginx
     ports:
       - 80:80
+      - 443:443
+    networks:
+      default:
+        aliases:
+          - frontend.demo.test
     volumes:
       - ./src/backend:/var/www/backend:ro,delegated
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d:ro
       - phpmyadmindata:/var/www/phpmyadmin:ro,delegated
+      - ./.docker/nginx/certs:/etc/nginx/certs:delegated
     depends_on:
       - backend
-      - phpmyadmin
       - frontend
+      - phpmyadmin
 
   # Backend Service
   backend:
@@ -23,6 +29,7 @@ services:
     volumes:
       - ./src/backend:/var/www/backend:delegated
       - ./.docker/backend/init:/opt/files/init:delegated,ro
+      - ./.docker/nginx/certs:/usr/local/share/ca-certificates:delegated,ro
     depends_on:
       - mysql
 

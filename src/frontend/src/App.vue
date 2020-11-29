@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import axios      from 'axios'
-import HelloThere from './components/HelloThere.vue'
+    import axios      from 'axios'
+    import HelloThere from './components/HelloThere.vue'
 
 export default {
   name: 'App',
@@ -20,7 +20,7 @@ export default {
   },
   mounted () {
     axios
-      .get('http://backend.demo.test/api/hello-there')
+      .get('https://backend.demo.test/api/hello-there')
       .then(response => (this.msg = response.data))
   }
 }
